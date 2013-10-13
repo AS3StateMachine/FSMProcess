@@ -11,7 +11,7 @@ public class ProcessStatusEvent extends Event
     public static const UNDECLARED_STATE_MESSAGE:String = "No transition has been declared for [State: ${0}] in [Process: ${1}]";
 
 
-    public function ProcessStatusEvent( type, message:String = "" )
+    public function ProcessStatusEvent( type:String, message:String = "" )
     {
         super( type );
         _message = message;

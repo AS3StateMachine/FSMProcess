@@ -2,13 +2,13 @@ package statemachine.process.support
 {
 import statemachine.support.TestRegistry;
 
-public class ClassReciever implements TestRegistry
+public class Receiver implements TestRegistry
 {
     public const classes:Array = []
 
-    public function register( c:Class ):void
+    public function register( value:* ):void
     {
-        classes.push( c ) ;
+        classes.push( value ) ;
     }
 }
 }

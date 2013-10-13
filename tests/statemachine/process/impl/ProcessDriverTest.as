@@ -10,7 +10,7 @@ import statemachine.process.events.ProcessStatusEvent;
 import statemachine.process.support.MockProcessProvider;
 import statemachine.process.support.MockStateMachineDriver;
 import statemachine.process.support.ProcessName;
-import statemachine.process.utils.injectTokens;
+import statemachine.utils.injectTokens;
 import statemachine.support.StateName;
 
 public class ProcessDriverTest

@@ -1,7 +1,5 @@
 package statemachine.process.impl
 {
-import flash.events.IEventDispatcher;
-
 import org.hamcrest.assertThat;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
@@ -9,7 +7,6 @@ import org.hamcrest.object.isTrue;
 import org.hamcrest.object.strictlyEqualTo;
 import org.swiftsuspenders.Injector;
 
-import statemachine.engine.api.FSMDispatcher;
 import statemachine.engine.impl.State;
 import statemachine.engine.impl.StateDispatcher;
 import statemachine.engine.impl.TransitionPhase;
@@ -25,36 +22,41 @@ public class TransitionEventMapTest implements TestRegistry
     private var _classUnderTest:TransitionEventMap;
     private var _injector:Injector;
     private var _executables:Vector.<Class>;
-    private var _dispatcher:IEventDispatcher;
+    private var _dispatcher:StateDispatcher;
+    private var _triggerMap:TriggerFlowMap;
 
     [Before]
     public function before():void
     {
         _injector = new Injector();
-        _dispatcher = new StateDispatcher();
-        _injector.map( FSMDispatcher ).toValue( _dispatcher );
+        _injector.map( Injector ).toValue( _injector );
+
+        _injector.map( Executor );
         _injector.map( TestRegistry ).toValue( this );
-        _classUnderTest = new TransitionEventMap( _injector );
+        _dispatcher = new StateDispatcher();
+        _triggerMap = new TriggerFlowMap( _injector );
+
+        _classUnderTest = new TransitionEventMap( _triggerMap, _dispatcher );
         _executables = new Vector.<Class>();
     }
 
-    [Test]
-    public function constructor_creates_childInjector():void
-    {
-        assertThat( _classUnderTest.injector.parentInjector, strictlyEqualTo( _injector ) );
-    }
+    /* [Test]
+     public function constructor_creates_childInjector():void
+     {
+     assertThat( _classUnderTest.injector.parentInjector, strictlyEqualTo( _injector ) );
+     }*/
 
-    [Test]
-    public function constructor_injects_childInjector_as_Injector():void
-    {
-        assertThat( _classUnderTest.injector.getInstance( Injector ), strictlyEqualTo( _classUnderTest.injector ) );
-    }
+    /* [Test]
+     public function constructor_injects_childInjector_as_Injector():void
+     {
+     assertThat( _classUnderTest.injector.getInstance( Injector ), strictlyEqualTo( _classUnderTest.injector ) );
+     }*/
 
-    [Test]
-    public function constructor_injects_Executor():void
-    {
-        assertThat( _classUnderTest.injector.hasMapping( Executor ), isTrue() );
-    }
+    /* [Test]
+     public function constructor_injects_Executor():void
+     {
+     assertThat( _classUnderTest.injector.hasMapping( Executor ), isTrue() );
+     }*/
 
     [Test]
     public function during_returns_self():void

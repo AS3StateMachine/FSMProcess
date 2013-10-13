@@ -6,6 +6,7 @@ import flash.utils.Dictionary;
 import org.swiftsuspenders.Injector;
 
 import statemachine.engine.api.FSMDispatcher;
+import statemachine.engine.impl.StateDispatcher;
 
 import statemachine.engine.impl.TransitionPhase;
 import statemachine.flow.core.Trigger;
@@ -19,16 +20,12 @@ public class TransitionEventMap implements FSMFlowMap, FSMFlowMapping
     private const _triggers:Dictionary = new Dictionary( false );
     private var _dispatcher:IEventDispatcher;
 
-    public function TransitionEventMap( injector:Injector )
+    public function TransitionEventMap( triggerMap:TriggerFlowMap, dispatcher:StateDispatcher )
     {
-        this.injector = injector.createChildInjector();
-        this.injector.map( Injector ).toValue( this.injector );
-        this.injector.map( Executor );
-        _dispatcher = this.injector.getInstance(FSMDispatcher);
-        _triggerMap = this.injector.getOrCreateNewInstance( TriggerFlowMap );
+        _triggerMap = triggerMap;
+        _dispatcher = dispatcher;
     }
 
-    internal var injector:Injector;
     private var _triggerMap:TriggerFlowMap;
     private var _currentBag:TriggerBag;
 

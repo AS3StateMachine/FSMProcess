@@ -5,7 +5,7 @@ import flash.events.IEventDispatcher;
 import statemachine.engine.api.FSMProperties;
 import statemachine.engine.api.StateMachine;
 import statemachine.process.api.ProcessControl;
-import statemachine.process.utils.injectTokens;
+import statemachine.utils.injectTokens;
 import statemachine.process.events.ProcessStatusEvent;
 
 public class ProcessDriver implements ProcessControl

@@ -6,18 +6,24 @@ import flash.events.IEventDispatcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.collection.array;
 import org.hamcrest.object.equalTo;
+import org.hamcrest.object.hasPropertyWithValue;
 import org.swiftsuspenders.Injector;
 
 import statemachine.engine.api.FSMBuilder;
-import statemachine.engine.api.FSMConfiguration;
+import statemachine.engine.FSMConfiguration;
+import statemachine.engine.impl.events.TransitionEvent;
 import statemachine.process.api.FSMFlowMap;
 import statemachine.process.api.ProcessBuilder;
-import statemachine.process.api.ProcessConfiguration;
+import statemachine.process.ProcessConfiguration;
 import statemachine.process.api.ProcessControl;
-import statemachine.process.support.ClassReciever;
+import statemachine.process.support.Receiver;
 import statemachine.process.support.ProcessName;
+import statemachine.process.support.cmds.CommandWithInjectedEvent;
+import statemachine.process.support.guards.BadStateGuard;
+import statemachine.support.Reason;
 import statemachine.support.TestRegistry;
 import statemachine.support.StateName;
+import statemachine.support.cmds.CommandWithTestEvent;
 import statemachine.support.cmds.MockCommandOne;
 import statemachine.support.cmds.MockCommandThree;
 import statemachine.support.cmds.MockCommandTwo;
@@ -36,7 +42,7 @@ public class Test
 
     public var processBuilder:ProcessBuilder;
 
-    public var receiver:ClassReciever;
+    public var receiver:Receiver;
 
 
     [Before]
@@ -45,8 +51,7 @@ public class Test
         _injector = new Injector();
         _injector.map( Injector ).toValue( _injector );
         _injector.map( IEventDispatcher ).toSingleton( EventDispatcher );
-        _injector.map( TestRegistry ).toSingleton( ClassReciever );
-        _injector.getOrCreateNewInstance( FSMConfiguration ).configure();
+        _injector.map( TestRegistry ).toSingleton( Receiver );
         _injector.getOrCreateNewInstance( ProcessConfiguration ).configure();
 
         stateBuilder = _injector.getInstance( FSMBuilder );
@@ -57,7 +62,7 @@ public class Test
 
     }
 
- //   [Test]
+   [Test]
     public function test():void
     {
 
@@ -98,7 +103,7 @@ public class Test
 
         flow
                 .during( StateName.THREE )
-                .cancellation.always.executeAll( MockCommandThree )
+                .cancellation.always.executeAll( CommandWithInjectedEvent )
                 .and.fix();
 
         flow
@@ -113,7 +118,13 @@ public class Test
 
         assertThat( processDriver.properties.currentState, equalTo( StateName.THREE ) );
 
-        assertThat( receiver.classes, array( MockCommandThree, MockCommandTwo, MockCommandOne, MockCommandThree ) )
+        assertThat(
+                receiver.classes,
+                array(
+                        MockCommandThree,
+                        MockCommandTwo,
+                        MockCommandOne,
+                        hasPropertyWithValue("reason", Reason.BECAUSE ) ) )
     }
 
 
