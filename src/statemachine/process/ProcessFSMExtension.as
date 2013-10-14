@@ -1,5 +1,7 @@
 package statemachine.process
 {
+import robotlegs.bender.framework.api.IContext;
+import robotlegs.bender.framework.api.IExtension;
 import robotlegs.bender.framework.api.IInjector;
 
 import statemachine.engine.api.FSMBuilder;
@@ -19,11 +21,12 @@ import statemachine.process.impl.ProcessDriver;
 import statemachine.process.impl.ProcessProvider;
 import statemachine.process.impl.TransitionEventMap;
 
-public class ProcessConfiguration
+public class ProcessFSMExtension implements IExtension
 {
+
     internal var injector:IInjector;
 
-    public function ProcessConfiguration( injector:IInjector )
+    public function extend( context:IContext ):void
     {
         this.injector = injector.createChild();
     }
@@ -39,10 +42,6 @@ public class ProcessConfiguration
         injector.map( StateMachineDriver ).asSingleton();
         injector.map( FSMBuilder ).asSingleton();
 
-        injector.parent.map( FSMBuilder ).toValue( injector.getInstance( FSMBuilder ) );
-
-
-        //////////////////////////////////////////
         injector.map( Executor ).asSingleton();
         injector.map( TriggerFlowMap ).asSingleton();
         injector.map( EventFlowMap ).toSingleton( EventMap );
@@ -51,6 +50,8 @@ public class ProcessConfiguration
         injector.map( ProcessBuilder ).asSingleton();
         injector.map( ProcessDriver ).asSingleton();
 
+        /*api injection*/
+        injector.parent.map( FSMBuilder ).toValue( injector.getInstance( FSMBuilder ) );
         injector.parent.map( FSMFlowMap ).toValue( injector.getInstance( TransitionEventMap ) );
         injector.parent.map( ProcessBuilder ).toValue( injector.getInstance( ProcessBuilder ) );
         injector.parent.map( StateMachine ).toValue( injector.getInstance( StateMachineDriver ) );

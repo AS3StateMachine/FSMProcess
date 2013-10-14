@@ -7,23 +7,20 @@ import org.hamcrest.assertThat;
 import org.hamcrest.collection.array;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.hasPropertyWithValue;
-import org.swiftsuspenders.Injector;
+
+import robotlegs.bender.framework.api.IInjector;
+import robotlegs.bender.framework.impl.RobotlegsInjector;
 
 import statemachine.engine.api.FSMBuilder;
-import statemachine.engine.FSMConfiguration;
-import statemachine.engine.impl.events.TransitionEvent;
 import statemachine.process.api.FSMFlowMap;
 import statemachine.process.api.ProcessBuilder;
-import statemachine.process.ProcessConfiguration;
 import statemachine.process.api.ProcessControl;
-import statemachine.process.support.Receiver;
 import statemachine.process.support.ProcessName;
+import statemachine.process.support.Receiver;
 import statemachine.process.support.cmds.CommandWithInjectedEvent;
-import statemachine.process.support.guards.BadStateGuard;
 import statemachine.support.Reason;
-import statemachine.support.TestRegistry;
 import statemachine.support.StateName;
-import statemachine.support.cmds.CommandWithTestEvent;
+import statemachine.support.TestRegistry;
 import statemachine.support.cmds.MockCommandOne;
 import statemachine.support.cmds.MockCommandThree;
 import statemachine.support.cmds.MockCommandTwo;
@@ -31,25 +28,18 @@ import statemachine.support.guards.GrumpyStateGuard;
 
 public class Test
 {
-    private var _injector:Injector;
-
-
     public var flow:FSMFlowMap;
-
     public var stateBuilder:FSMBuilder;
-
     public var processDriver:ProcessControl;
-
     public var processBuilder:ProcessBuilder;
-
     public var receiver:Receiver;
-
+    private var _injector:IInjector;
 
     [Before]
     public function before():void
     {
-        _injector = new Injector();
-        _injector.map( Injector ).toValue( _injector );
+        _injector = new RobotlegsInjector();
+        _injector.map( IInjector ).toValue( _injector );
         _injector.map( IEventDispatcher ).toSingleton( EventDispatcher );
         _injector.map( TestRegistry ).toSingleton( Receiver );
         _injector.getOrCreateNewInstance( ProcessConfiguration ).configure();
@@ -62,7 +52,7 @@ public class Test
 
     }
 
-   [Test]
+    [Test]
     public function test():void
     {
 
@@ -112,8 +102,6 @@ public class Test
                 .and.fix();
 
 
-
-
         processDriver.run( ProcessName.TO_THE_END );
 
         assertThat( processDriver.properties.currentState, equalTo( StateName.THREE ) );
@@ -124,7 +112,7 @@ public class Test
                         MockCommandThree,
                         MockCommandTwo,
                         MockCommandOne,
-                        hasPropertyWithValue("reason", Reason.BECAUSE ) ) )
+                        hasPropertyWithValue( "reason", Reason.BECAUSE ) ) )
     }
 
 

@@ -3,14 +3,10 @@ package statemachine.process.impl
 import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
 
-import org.swiftsuspenders.Injector;
-
-import statemachine.engine.api.FSMDispatcher;
 import statemachine.engine.impl.StateDispatcher;
-
 import statemachine.engine.impl.TransitionPhase;
-import statemachine.flow.core.Trigger;
 import statemachine.flow.builders.FlowMapping;
+import statemachine.flow.core.Trigger;
 import statemachine.flow.impl.*;
 import statemachine.process.api.FSMFlowMap;
 import statemachine.process.builders.FSMFlowMapping;

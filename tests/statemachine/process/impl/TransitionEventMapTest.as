@@ -5,7 +5,9 @@ import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.isTrue;
 import org.hamcrest.object.strictlyEqualTo;
-import org.swiftsuspenders.Injector;
+
+import robotlegs.bender.framework.api.IInjector;
+import robotlegs.bender.framework.impl.RobotlegsInjector;
 
 import statemachine.engine.impl.State;
 import statemachine.engine.impl.StateDispatcher;
@@ -20,43 +22,26 @@ import statemachine.support.cmds.MockCommandOne;
 public class TransitionEventMapTest implements TestRegistry
 {
     private var _classUnderTest:TransitionEventMap;
-    private var _injector:Injector;
+    private var _injector:IInjector;
     private var _executables:Vector.<Class>;
     private var _dispatcher:StateDispatcher;
     private var _triggerMap:TriggerFlowMap;
+    private var _executor:Executor;
 
     [Before]
     public function before():void
     {
-        _injector = new Injector();
-        _injector.map( Injector ).toValue( _injector );
-
-        _injector.map( Executor );
+        _injector = new RobotlegsInjector();
+        _injector.map( IInjector ).toValue( _injector );
+        _executor = new Executor( _injector );
+        //_injector.map( Executor );
         _injector.map( TestRegistry ).toValue( this );
         _dispatcher = new StateDispatcher();
-        _triggerMap = new TriggerFlowMap( _injector );
+        _triggerMap = new TriggerFlowMap( _executor );
 
         _classUnderTest = new TransitionEventMap( _triggerMap, _dispatcher );
         _executables = new Vector.<Class>();
     }
-
-    /* [Test]
-     public function constructor_creates_childInjector():void
-     {
-     assertThat( _classUnderTest.injector.parentInjector, strictlyEqualTo( _injector ) );
-     }*/
-
-    /* [Test]
-     public function constructor_injects_childInjector_as_Injector():void
-     {
-     assertThat( _classUnderTest.injector.getInstance( Injector ), strictlyEqualTo( _classUnderTest.injector ) );
-     }*/
-
-    /* [Test]
-     public function constructor_injects_Executor():void
-     {
-     assertThat( _classUnderTest.injector.hasMapping( Executor ), isTrue() );
-     }*/
 
     [Test]
     public function during_returns_self():void
@@ -111,7 +96,6 @@ public class TransitionEventMapTest implements TestRegistry
         assertThat( _classUnderTest.has( StateName.CLIENT, TransitionPhase.TEAR_DOWN ), isTrue() );
     }
 
-
     [Test]
     public function flow_not_executed_if_event_not_dispatched():void
     {
@@ -164,7 +148,6 @@ public class TransitionEventMapTest implements TestRegistry
         assertThat( _executables.length, equalTo( 0 ) );
 
     }
-
 
     public function register( value:* ):void
     {
